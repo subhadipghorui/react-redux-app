@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import axios from 'axios'
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { removeSelectedProduct, selectedProduct } from '../redux/actions/productAction';
+import { removeSelectedProduct, selectedProduct, fetchProduct } from '../redux/actions/productAction';
+import { addToCart } from '../redux/actions/cartAction';
 
 const ProductDetail = () => {
   const {productId} = useParams()
@@ -10,19 +11,29 @@ const ProductDetail = () => {
 
   const dispatch = useDispatch()
 
-  const fetchProduct = async () => {
-    const response = await axios
-      .get(`https://fakestoreapi.com/products/${productId}`)
-      .catch((err) => {
-        console.log("Err: ", err);
-      });
+  /** Synchronous way without thunk  */
+
+  // const fetchProduct = async () => {
+  //   const response = await axios
+  //     .get(`https://fakestoreapi.com/products/${productId}`)
+  //     .catch((err) => {
+  //       console.log("Err: ", err);
+  //     });
      
-    dispatch(selectedProduct(response.data));
-  };
+  //   dispatch(selectedProduct(response.data));
+  // };
+  // useEffect(() => {
+  //   if(productId && productId !== "") fetchProduct();
+  //   return () => dispatch(selectedProduct(null));
+  // }, [productId]);
+
+  /** Thunk way  */
   useEffect(() => {
-    if(productId && productId !== "") fetchProduct();
-    return () => dispatch(selectedProduct(null));
-  }, [productId]);
+    if (productId && productId !== "") dispatch(fetchProduct(productId));
+    return () => {
+      dispatch(removeSelectedProduct());
+    };
+  }, []);
 
   return (
     <div className='container'>
@@ -41,7 +52,7 @@ const ProductDetail = () => {
                       <p className="card-text">{product.description}</p>
 
                       <div>
-                        <button className='btn btn-primary'>Add to cart</button>
+                        <button className='btn btn-primary' onClick={() => dispatch(addToCart(product))}>Add to cart</button>
                       </div>
                     </div>
                         </div>
