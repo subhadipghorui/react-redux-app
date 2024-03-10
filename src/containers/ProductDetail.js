@@ -23,7 +23,7 @@ const ProductDetail = () => {
     if(productId && productId !== "") fetchProduct();
     return () => dispatch(selectedProduct(null));
   }, [productId]);
-  console.log(product)
+
   return (
     <div className='container'>
         <h1>ProductDetail</h1>

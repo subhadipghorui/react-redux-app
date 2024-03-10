@@ -1,23 +1,32 @@
 import axios from "axios";
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { setProducts } from '../redux/actions/productAction';
+import { setProducts, fetchProducts } from '../redux/actions/productAction';
 import { Link } from "react-router-dom";
 
 const ProductListing = () => {
   const products = useSelector((state) => state.allProducts.products)
   const dispatch = useDispatch();
-  const fetchProducts = async () => {
-    const response = await axios
-      .get("https://fakestoreapi.com/products")
-      .catch((err) => {
-        console.log("Err: ", err);
-      });
+
+  /** Synchronous way without thunk  */
+
+  // const fetchProducts = async () => {
+  //   const response = await axios
+  //     .get("https://fakestoreapi.com/products")
+  //     .catch((err) => {
+  //       console.log("Err: ", err);
+  //     });
      
-    dispatch(setProducts(response.data));
-  };
+  //   dispatch(setProducts(response.data));
+  // };
+  // useEffect(() => {
+  //   fetchProducts();
+  // }, []);
+
+
+  /** Thunk way  */
   useEffect(() => {
-    fetchProducts();
+    dispatch(fetchProducts());
   }, []);
 
   return (
